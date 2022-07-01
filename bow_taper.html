@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+		<head>
+				<title>Calculate bow taper</title>
+		</head>
+		<body>
+				<img src="bow_taper.png">
+				<br></br>
+<label for="lenght">(A) Limb lenght: </label>				
+				<input type="text" placeholder="Limb lenght " id="lenght">
+				<br></br>
+<label for="handle">(B) Height at the handle: </label>				
+				<input type="text" placeholder="Height at the handle" id="handle">
+				<br></br>
+<label for="tip">(C) Height at the tip: </label>				
+				<input type="text" placeholder="Height at the tip" id="tip">
+				<br></br>
+<label for="frequency">(D) Frequency of measurments: </label>				
+				<input type="text" placeholder="Frequency of measurments" id="frequency">
+				<br></br>
+				<input type="button" value="Generate Measurements" onclick="generate_measurments()">
+				
+				<script>
+function generate_measurments() {
+		Number.prototype.round = function(n) {
+			const d = Math.pow(10, n);
+			return Math.round((this + Number.EPSILON) * d) / d;
+		}
+		//Load inputs
+		var lenght = parseFloat(document.getElementById("lenght").value);
+		var handle = parseFloat(document.getElementById("handle").value);
+		var tip = parseFloat(document.getElementById("tip").value);
+		var frequency =parseFloat( document.getElementById("frequency").value);
+		var A, B, C, a, alpha, angleToDegrees, b, beta, c, delta, epsilon, gamma, imtrSLside, imtrSQside, innerTriangleSide, lenghtOfSlopedSide, pi, topRange;
+		pi = Math.PI;
+		alpha = pi / 2;
+		b = lenght;
+		a = tip;
+		c = Math.sqrt(Math.pow(b, 2) + Math.pow(a, 2) - 2 * b * a * Math.cos(alpha));
+		innerTriangleSide = c;
+		beta = Math.acos((Math.pow(c, 2) + Math.pow(b, 2) - Math.pow(a, 2)) / (2 * c * b));
+		a = handle;
+		gamma = alpha - beta;
+		b = Math.sqrt(Math.pow(a, 2) + Math.pow(c, 2) - 2 * a * c * Math.cos(gamma));
+		lenghtOfSlopedSide = b;
+		delta = Math.acos((Math.pow(b, 2) + Math.pow(a, 2) - Math.pow(c, 2)) / (2 * b * a));
+		epsilon = pi - pi / 2 - delta;
+		imtrSQside = a * Math.sin(delta) / Math.sin(epsilon);
+		imtrSLside = a * Math.sin(alpha) / Math.sin(epsilon);
+		//angleToDegrees = Math.degrees(alpha);
+		A = delta;
+		B = epsilon;
+		C = alpha;
+		topRange = Number.parseInt(lenght) + frequency;
+		var results = {};
+
+		for (var i = 0, _pj_a = topRange; i < _pj_a; i += frequency) {
+				console.log( i + ": ");
+				a = imtrSQside - i;
+				height = a * Math.sin(B) / Math.sin(A);
+				console.log(height);
+				results[i]=height;
+		}
+
+		a = imtrSQside - lenght;
+		height = a * Math.sin(B) / Math.sin(A);
+		console.log("doublecheck " + lenght + ": ");
+		console.log(height);
+		results[lenght] = height;
+
+		// creates a <table> element and a <tbody> element
+		const tbl = document.createElement("table");
+		const tblBody = document.createElement("tbody");
+
+		for (var i = 0, _pj_a = topRange; i < _pj_a; i += frequency){
+				// creates a table row
+				const row = document.createElement("tr");
+
+				for (let j = 0; j < 2; j++) {
+						// Create a <td> element and a text node, make the text
+						// node the contents of the <td>, and put the <td> at
+						// the end of the table row
+						const cell = document.createElement("td");
+						if (j === 0) {
+														var cellText = document.createTextNode(i);
+								} else {
+																				var cellText = document.createTextNode(results[i].round(1));
+								}
+						cell.appendChild(cellText);
+						row.appendChild(cell);
+				}
+
+				// add the row to the end of the table body
+				tblBody.appendChild(row);
+				}
+//Add a last row with the last measurment
+const row = document.createElement("tr");
+var cell = document.createElement("td");
+cellText = document.createTextNode(lenght);
+cell.appendChild(cellText);
+row.appendChild(cell);
+var cell = document.createElement("td");
+cellText = document.createTextNode(results[lenght].round(1));
+cell.appendChild(cellText);
+row.appendChild(cell);
+tblBody.appendChild(row);
+
+		// put the <tbody> in the <table>
+				tbl.appendChild(tblBody);
+		// appends <table> into <body>
+				document.body.appendChild(tbl);
+		// sets the border attribute of tbl to '2'
+		tbl.setAttribute("border", "2");
+
+
+}
+				</script>
+		</body>
+</html>
