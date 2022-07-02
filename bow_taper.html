@@ -82,7 +82,9 @@ function generate_measurments() {
 		results[lenght] = height;
 
 		// creates a <table> element and a <tbody> element
-		const tbl = document.createElement("table");
+		var tbl = document.getElementById('mytable');
+		if(tbl) tbl.parentNode.removeChild(tbl);
+		tbl = document.createElement("table");
 		const tblBody = document.createElement("tbody");
 
 		for (var i = 0, _pj_a = topRange; i < _pj_a; i += frequency){
@@ -120,6 +122,8 @@ tblBody.appendChild(row);
 
 		// put the <tbody> in the <table>
 				tbl.appendChild(tblBody);
+		// set a table id
+				tbl.setAttribute('id', 'mytable');
 		// appends <table> into <body>
 				document.body.appendChild(tbl);
 		// sets the border attribute of tbl to '2'
